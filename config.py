@@ -2,6 +2,7 @@
 Stores the applications configuration settings
 '''
 from dotenv import load_dotenv
+import os
 
 
 # loads the environment variables
