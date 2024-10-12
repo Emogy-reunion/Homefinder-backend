@@ -3,6 +3,7 @@ This module contains all models related to the app
 '''
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_bcrypt import Bcrypt
 
 
 db = SQLAlchemy()
