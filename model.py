@@ -19,9 +19,9 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     firstname = db.Column(db.String(50), nullable=False)
     lastname = db.Column(db.String(50), nullable=False)
-    agency = db.column(db.String(50), nullable=False)
-    email = db.column(db.String(50), unique=True, nullable=False)
-    password = db.column(db.String(100), nullable=False)
+    agency = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __init__(self, firstname, lastname, agency, email, password):
