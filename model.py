@@ -4,10 +4,13 @@ This module contains all models related to the app
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_bcrypt import Bcrypt
+from itsdangerous import URLSafeTimedSerializer
+from create_app import create_app
 
-
+app = create_app()
 db = SQLAlchemy()
 bcrypt = Bcrypt()
+serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 class Users(db.Model):
     '''
@@ -46,3 +49,18 @@ class Users(db.Model):
         compares user password and stored hash to authenticate the user
         '''
         return check_password_hash(self.password, password)
+
+    def generate_token(self):
+        '''
+        Generates the verification token
+        '''
+        return serializer.dumps({'user_id': self.id})
+
+    @staticmethod
+    def verify_token(token):
+        try:
+            data = serializer.loads(token, max_age=3600)
+            return db.session.get(Users, data['user_id'])
+        except Exception as e:
+            return None
+
