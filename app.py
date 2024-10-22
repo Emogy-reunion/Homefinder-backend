@@ -4,6 +4,7 @@ Handles login management, creating initial admins and running the application
 '''
 from create_app import create_app
 from model import db, bcrypt, Users
+from utils.verfication import mail
 from routes.authentication import auth
 
 
@@ -15,6 +16,7 @@ initialize the instances with the app
 '''
 db.init_app(app)
 bcrypt.init_app(app)
+mail.init_app(app)
 
 app.register_blueprint(auth)
 
