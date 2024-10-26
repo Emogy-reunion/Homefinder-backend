@@ -3,7 +3,7 @@ This file contains routes that handle user authentication
 '''
 from flask import Blueprint, request, render_template, redirect, jsonify
 from model import db, Users
-from forms import RegistrationForm
+from form import RegistrationForm
 from utils.verification import send_verification_email
 
 
