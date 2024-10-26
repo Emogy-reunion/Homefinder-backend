@@ -13,7 +13,7 @@ def send_verification_email(user):
 
     verification_url = url_for('/verify_email', token=token, _external=True)
     msg = Message(
-            subject=Verify Email,
+            subject='Verify Email',
             sender='info.bytevision@gmail.com',
             recievers=[user.email]
             )
