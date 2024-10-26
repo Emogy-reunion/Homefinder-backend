@@ -25,6 +25,7 @@ class Users(db.Model):
     agency = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    verified = db.Column(db.Boolean, default=False)
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __init__(self, firstname, lastname, agency, email, password):
