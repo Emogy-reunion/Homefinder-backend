@@ -20,7 +20,7 @@ def verify_email(token):
     else:
         return jsonify({'error': 'Verification failed, try again!'})
 
-@verify.route('/resend_verification_email', methods=['POST'])
+@verify.route('/resend_verification_email')
 def resend_verification_email():
 
     data = request.json()
