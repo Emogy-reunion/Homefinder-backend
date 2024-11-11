@@ -6,7 +6,7 @@ from create_app import create_app
 from model import db, bcrypt, Users
 from utils.verification import mail
 from routes.authentication import auth
-from routes.authentication import verify
+from routes.verification import verify
 from flask_migrate import Migrate
 
 
