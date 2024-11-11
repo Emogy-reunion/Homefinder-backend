@@ -15,7 +15,7 @@ def send_verification_email(user):
     msg = Message(
             subject='Verify Email',
             sender='info.bytevision@gmail.com',
-            recievers=[user.email]
+            recipients=[user.email]
             )
     msg.body = f"Click the following link to verify your email {verification_url}"
     msg.html = render_template('verification.html', verification_url=verification_url, username=user.firstname)
