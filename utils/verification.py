@@ -10,7 +10,6 @@ mail = Mail()
 def send_verification_email(user):
 
     token = user.generate_token()
-
     verification_url = url_for('/verify_email', token=token, _external=True)
     msg = Message(
             subject='Verify Email',
