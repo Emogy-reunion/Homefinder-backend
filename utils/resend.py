@@ -12,5 +12,9 @@ def resend_verification_email(user):
             recipients=[user.email]
             )
     msg.body = f'Click the following link to verify your identity {verification_url}'
-    msg.html = render_template('reverification.html', name=user.firstname, verification_url=verification_url)
+
+    try:
+        msg.html = render_template('reverification.html', name=user.firstname, verification_url=verification_url)
+    except Exception as e:
+        print(e)
     mail.send(msg)
