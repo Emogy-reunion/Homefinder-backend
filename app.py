@@ -6,6 +6,7 @@ from create_app import create_app
 from model import db, bcrypt, Users
 from utils.verification import mail
 from routes.authentication import auth
+from routes.authentication import verify
 from flask_migrate import Migrate
 
 
@@ -22,6 +23,7 @@ mail.init_app(app)
 migrate = Migrate(app, db)
 
 app.register_blueprint(auth)
+app.register_blueprint(verify)
 
 with app.app_context():
     db.create_all()
