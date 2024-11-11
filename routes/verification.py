@@ -8,7 +8,7 @@ from utils.resend import resend_verification_email
 
 verify = Blueprint('verify', __name__)
 
-@verify.route('verify_email/<token>')
+@verify.route('/verify_email/<token>')
 def verify_email(token):
      
     user = Users.generate_token(token)
