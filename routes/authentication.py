@@ -4,6 +4,7 @@ This file contains routes that handle user authentication
 from flask import Blueprint, request, render_template, redirect, jsonify
 from model import db, Users
 from utils.verification import send_verification_email
+import re
 
 
 auth = Blueprint('auth', __name__)
@@ -32,7 +33,7 @@ def register():
 
     if not email:
         errors['email'] = 'Email is required!'
-    elif '@' not in email:
+    elif not re.match(r"^[\w\.-]+@[\w\.-]+\.\w+$", email):
         errors['email'] = 'Invalid email format!'
 
     if not agency:
@@ -40,8 +41,16 @@ def register():
         
     if not password:
         errors['password'] = 'Password is required!'
-    elif password < 6:
-        errors['password'] = 'Password must be at least 6 characters long!'
+    elif len(password) < 8:
+        errors['password'] = 'Password must be at least 8 characters long!'
+    elif not re.search(r"[A-Z]", password):
+        errors['password'] = 'Password must contain at least one uppercase letter!'
+    elif not re.search(r"[a-z]", password):
+        errors['password'] = 'Password must contain at least one lowercase letter!'
+    elif not re.search(r"[0-9]", password):
+        errors['password'] = 'Password must contain at least one digit!'
+    elif not re.search(r"[@$!%*?&]", password):
+        errors['password'] = 'Password must contain at least one special character (@$!%*?&)!'
 
     if errors:
         return jsonify({'formerrors': errors})
