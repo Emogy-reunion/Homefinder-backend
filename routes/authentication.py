@@ -23,7 +23,7 @@ def register():
     lastname = data.get('lastname').lower()
     agency = data.get('agency').lower()
     email = data.get('email').lower()
-    password = data.get('password').lower()
+    password = data.get('password')
 
     if not firstname:
         errors['firstname'] = 'First name is required!'
