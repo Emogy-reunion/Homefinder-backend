@@ -8,7 +8,9 @@ from flask import url_for, render_template
 mail = Mail()
 
 def send_verification_email(user):
-
+    '''
+    sends verification emails to users
+    '''
     token = user.generate_token()
     verification_url = url_for('/verify_email', token=token, _external=True)
     msg = Message(
