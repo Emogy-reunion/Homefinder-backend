@@ -39,9 +39,9 @@ def register():
         errors['agency'] = 'Agency is required!'
         
     if not password:
-        errors['password']: 'Password is required!'
+        errors['password'] = 'Password is required!'
     elif password < 6:
-        errors['password']: 'Password must be at least 6 characters long!'
+        errors['password'] = 'Password must be at least 6 characters long!'
 
     if errors:
         return jsonify({'formerrors': errors})
