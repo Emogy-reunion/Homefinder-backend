@@ -5,7 +5,7 @@ from flask import Blueprint, request, render_template, redirect, jsonify
 from model import db, Users
 from utils.verification import send_verification_email
 import re
-
+from email_validator import validate_email, EmailNotValidError
 
 auth = Blueprint('auth', __name__)
 
@@ -19,11 +19,11 @@ def register():
     data = request.json
     errors = {}
 
-    firstname = data.get('firstname')
-    lastname = data.get('lastname')
-    agency = data.get('agency')
-    email = data.get('email')
-    password = data.get('password')
+    firstname = data.get('firstname').lower()
+    lastname = data.get('lastname').lower()
+    agency = data.get('agency').lower()
+    email = data.get('email').lower()
+    password = data.get('password').lower()
 
     if not firstname:
         errors['firstname'] = 'First name is required!'
@@ -33,8 +33,11 @@ def register():
 
     if not email:
         errors['email'] = 'Email is required!'
-    elif not re.match(r"^[\w\.-]+@[\w\.-]+\.\w+$", email):
-        errors['email'] = 'Invalid email format!'
+    else:
+        try:
+            valid = validate_email(email)
+        except EmailNotValidError as e:
+            errors['email'] = str(e)
 
     if not agency:
         errors['agency'] = 'Agency is required!'
