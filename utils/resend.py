@@ -5,7 +5,7 @@ from utils.verification import mail
 def resend_verification_email(user):
 
     token = user.generate_token()
-    verification_url = url_for('verify_email', token=token, _external=True)
+    verification_url = url_for('verify.verify_email', token=token, _external=True)
     msg = Message(
             subject='Identity verification',
             sender='info.bytevision@gmail.com',
