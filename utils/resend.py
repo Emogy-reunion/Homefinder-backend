@@ -5,12 +5,16 @@ from utils.verification import mail
 def resend_verification_email(user):
 
     token = user.generate_token()
-    verification_url = url_for('verify_email', token=token, _external=True)
+    verification_url = url_for('verify.verify_email', token=token, _external=True)
     msg = Message(
             subject='Identity verification',
             sender='info.bytevision@gmail.com',
             recipients=[user.email]
             )
     msg.body = f'Click the following link to verify your identity {verification_url}'
-    msg.html = render_template('reverification.html', name=user.firstname, verification_url=verification_url)
+
+    try:
+        msg.html = render_template('reverification.html', name=user.firstname, verification_url=verification_url)
+    except Exception as e:
+        print(e)
     mail.send(msg)
