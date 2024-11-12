@@ -6,6 +6,7 @@ from model import db, Users
 from utils.verification import send_verification_email
 import re
 from email_validator import validate_email, EmailNotValidError
+from flask_jwt_extended import create_access_token, create_refresh_token
 
 auth = Blueprint('auth', __name__)
 
@@ -74,4 +75,48 @@ def register():
         db.session.commit()
 
         send_verification_email(new_user)
-        return jsonify({'success': 'Your account has been successfully created. Please check your email for a verification link to complete the registration process.'})        
+        return jsonify({'success': 'Your account has been successfully created. Please check your email for a verification link to complete the registration process.'})
+
+
+@auth.route('/login', methods=['POST'])
+def login():
+    '''
+    Logs the users to the session
+    '''
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    errors = {}
+
+    if not email:
+        errors[email] = 'Email is required!'
+    else:
+        try:
+            valid = validate_email(email)
+        except EmailNotValidError as e:
+            errors['email'] = 'Invalid email format!'
+
+    if not password:
+        errors['password'] = 'Password is required!'
+
+    if errors:
+        return jsonify({'formerrors': errors})
+
+    user = Users.session.query(email=email).first()
+
+    if not user:
+        return jsonify({"error": "Account with this email doesn't exist"})
+    else:
+        if user.verified == True:
+            if user.check_password(password):
+                access_token = create_access_token(identity=user['id'])
+                refresh_token = create_refresh_token(identity=user['id'])
+
+                return jsonify(access_token=access_token, refresh_token=refresh_token)
+            else:
+                return jsonify({'error': 'Incorrect password. Please try again!'})
+        else:
+            return jsonify({'unverified': 'Your account in unverified. Verify before login'})
+
+
