@@ -9,10 +9,10 @@ from email_validator import validate_email, EmailNotValidError
 
 verify = Blueprint('verify', __name__)
 
-@verify.route('/verify_email/<token>')
-def verify_email(token):
+@verify.route('/verify_email_token/<token>')
+def verify_email_token(token):
      
-    user = Users.generate_token(token)
+    user = Users.verify_token(token)
 
     if user:
         user.verified = True
