@@ -49,7 +49,7 @@ class Users(db.Model):
         '''
         compares user password and stored hash to authenticate the user
         '''
-        return check_password_hash(self.password, password)
+        return bcrypt.check_password_hash(self.password, password)
 
     def generate_token(self):
         '''
