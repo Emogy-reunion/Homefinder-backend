@@ -103,7 +103,7 @@ def login():
     if errors:
         return jsonify({'formerrors': errors})
 
-    user = Users.session.query(email=email).first()
+    user = Users.query.filter_by(email=email).first()
 
     if not user:
         return jsonify({"error": "Account with this email doesn't exist"})
