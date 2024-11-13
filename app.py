@@ -6,7 +6,9 @@ from create_app import create_app
 from model import db, bcrypt, Users
 from utils.verification import mail
 from routes.authentication import auth
+from routes.verification import verify
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 
 
 app = create_app()
@@ -15,13 +17,17 @@ app = create_app()
 initialize the instances with the app 
     so they can access configuration settings
 '''
+
+jwt = JWTManager(app)
 db.init_app(app)
 bcrypt.init_app(app)
 mail.init_app(app)
 
+
 migrate = Migrate(app, db)
 
 app.register_blueprint(auth)
+app.register_blueprint(verify)
 
 with app.app_context():
     db.create_all()

@@ -2,16 +2,17 @@
 this file contains routes that verify users and reverify them
 '''
 from flask import Blueprint, jsonify
-from models import Users, db
+from model import Users, db
 from utils.resend import resend_verification_email
+from email_validator import validate_email, EmailNotValidError
 
 
 verify = Blueprint('verify', __name__)
 
-@verify.route('verify_email/<token>')
-def verify_email(token):
+@verify.route('/verify_email_token/<token>')
+def verify_email_token(token):
      
-    user = Users.generate_token(token)
+    user = Users.verify_token(token)
 
     if user:
         user.verified = True
@@ -23,8 +24,17 @@ def verify_email(token):
 @verify.route('/resend_verification_email')
 def resend_verification_email():
 
-    data = request.json()
+    data = request.json
     email = data['email']
+
+    if not email:
+        errors['email'] = 'Email is required!'
+    else:
+        try:
+            valid = validate_email(email)
+        except EmailNotValidError as e:
+            return jsonify({'error': 'Invalid email format!'})
+
 
     user = Users.query.filter_by(email=email).first()
 
