@@ -81,7 +81,8 @@ def register():
 @auth.route('/login', methods=['POST'])
 def login():
     '''
-    Logs the users to the session
+    authenticates the user
+    creates an access token
     '''
     data = request.json
     email = data.get('email')
