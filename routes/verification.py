@@ -11,6 +11,9 @@ verify = Blueprint('verify', __name__)
 
 @verify.route('/verify_email_token/<token>')
 def verify_email_token(token):
+    '''
+    verifies the email token and updates the users verification status
+    '''
      
     user = Users.verify_token(token)
 
@@ -18,6 +21,19 @@ def verify_email_token(token):
         user.verified = True
         db.session.commit()
         return jsonify({'success': 'Email verified successfuly!'})
+    else:
+        return jsonify({'error': 'Verification failed, try again!'})
+
+@verify.route('/verify_password_reset_token/<token>')
+def verify_password_reset_token(token):
+    '''
+    verifies the password token before resetting the password
+    on success it returns the user id
+    '''
+    
+    user = Users.verify_token(token)
+    if user:
+        return jsonify({'id': user.id})
     else:
         return jsonify({'error': 'Verification failed, try again!'})
 

@@ -57,7 +57,7 @@ def register():
         errors['password'] = 'Password must contain at least one special character (@$!%*?&)!'
 
     if errors:
-        return jsonify({'formerrors': errors})
+        return jsonify({'errors': errors})
 
 
     user = Users.query.filter_by(email=email).first()
@@ -85,7 +85,7 @@ def login():
     creates an access token
     '''
     data = request.json
-    email = data.get('email')
+    email = data.get('email').lower()
     password = data.get('password')
 
     errors = {}
@@ -102,7 +102,7 @@ def login():
         errors['password'] = 'Password is required!'
 
     if errors:
-        return jsonify({'formerrors': errors})
+        return jsonify({'errors': errors})
 
     user = Users.query.filter_by(email=email).first()
 
