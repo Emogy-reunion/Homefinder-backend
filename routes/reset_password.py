@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from model import db, Users
 import re
 from email_validator import validate_email, EmailNotValidError
-from utils.password_reset_email import password_reset_email
+from utils.password_reset_email import reset_password_email
 
 
 reset = Blueprint('reset', __name__)
@@ -29,7 +29,7 @@ def forgot_password():
 
     user = Users.query.filter_by(email=email).first()
     if user:
-        password_reset_email(user)
+        reset_password_email(user)
         return jsonify({'success': 'Password reset instructions sent to your email!'})
     else:
         return jsonify({'error': "Account doesn't exist!"})

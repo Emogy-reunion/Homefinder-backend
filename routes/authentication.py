@@ -6,7 +6,7 @@ from model import db, Users
 from utils.verification import send_verification_email
 import re
 from email_validator import validate_email, EmailNotValidError
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, jwt_required, get_jwt_identity, unset_jwt_cookies
 
 auth = Blueprint('auth', __name__)
 
@@ -114,10 +114,41 @@ def login():
                 access_token = create_access_token(identity=user.id)
                 refresh_token = create_refresh_token(identity=user.id)
 
-                return jsonify(access_token=access_token, refresh_token=refresh_token)
+                response = jsonify({'success': 'Logged in successfully!'})
+                set_access_cookies(response, access_token)
+                set_refresh_cookies(response, refresh_token)
+                return response
             else:
                 return jsonify({'error': 'Incorrect password. Please try again!'})
         else:
             return jsonify({'unverified': 'Your account in unverified. Verify before login'})
 
+@auth.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    '''
+    creates a new access token using refresh token
+    '''
+    current_user_id = get_jwt_identity()
+    new_access_token = create_access_token(identity=current_user_id)
+    response = jsonify({'success': 'Successfully created access token'})
+    set_access_cookies(access_token)
+    return response
 
+@auth.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    '''
+    destroys the access and refresh cookies logging the user out of the session
+    '''
+    response = ({'success': 'Logged out successfuly'})
+    unset_jwt_cookies(response)
+    return response
+
+@auth.route('/protected', methods=['POST'])
+@jwt_required()
+def protected():
+    '''
+    route to that react uses to check if the user is logged in
+    '''
+    return jsonify({"success": 'User is logged in!'})

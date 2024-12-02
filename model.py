@@ -17,6 +17,7 @@ class Users(db.Model):
     Defines the users table in the database
     It's attributes define the columns of the table
     The init method initializes the columns with data
+    Has a many to one relationship with the properties table
     '''
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -27,6 +28,7 @@ class Users(db.Model):
     password = db.Column(db.String(100), nullable=False)
     verified = db.Column(db.Boolean, default=False)
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    properties = db.relationship('Properties', back_populates='user', lazy=True)
 
     def __init__(self, firstname, lastname, agency, email, password):
         '''
@@ -65,3 +67,45 @@ class Users(db.Model):
         except Exception as e:
             return None
 
+
+class Properties(db.Model):
+    ''''
+    table to store the property details
+    '''
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    location = db.Column(db.String(50), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    bedrooms = db.Column(db.Integer, nullable=False)
+    purpose = db.Column(db.String(30), nullable=False)
+    latitude = db.Column(db.String(150), nullable=False)
+    longitude = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    posted_at = db.Column(db.DateTime, default=datetime.utcnow())
+    user = db.relationship('Users', back_populates='properties', lazy=True)
+    images = db.relationship('Images', backref='property', lazy=True)
+
+    def __init__(self, user_id, location, price, bedrooms, purpose,
+                 latitude, longitude, description):
+
+        self.user_id = user_id
+        self.location = location
+        self.price = price
+        self.bedrooms = bedrooms
+        self.purpose = purpose
+        self.latitude = latitude
+        self.longitude = longitude
+        self.description = description
+
+
+class Images(db.Model):
+    '''
+    table to store the image properties
+    '''
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    property_id = db.Column(db.Integer, db.ForeignKey('properties.id'), nullable=False)
+    filename = db.Column(db.String(150), nullable=False)
+
+    def __init__(self, property_id, filename):
+        self.property_id = property_id
+        self.filename = filename

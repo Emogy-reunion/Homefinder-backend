@@ -25,3 +25,6 @@ class Config():
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+    JWT_TOKEN_LOCATION = ['cookies']
+    UPLOAD_FOLDER = '/static/uploads'
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
