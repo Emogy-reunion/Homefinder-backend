@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from model import db, Users, Images, Properties
-from sqlalchemy.orm import selectingload
+from sqlalchemy.orm import selectinload
 
 
 posts = Blueprint('posts', __name__)
@@ -41,10 +41,31 @@ def member_uploads_preview():
                 "prev": paginated_results.prev_num if paginated_results.has_prev else None
                 }
             }
-    return jsonify(response)
+
+    if response:
+        return jsonify(response)
+    else:
+        return jsonify({'error': 'Properties not found'}), 400
 
 
 @posts.routes('/member_uploads_details/<int:property_id>', methods=['GET'])
-def member_upload_details():
+def member_upload_details(property_id):
     '''
-    Retrieves an items details e.g map, description, images
+    Retrieves an item's details e.g map, description, images e.t.c
+    '''
+    details = Properties.query.filter_by(property_id=property_id).options(selectionload(Properties.images)).first()
+
+    if not details:
+        return jsonify({'error': 'Property not found'}), 404
+
+    property_details = {
+            'location': details.location,
+            'price': details.price,
+            'bedrooms': details.bedrooms,
+            'purpose': details.purpose,
+            'latitude': details.latitude,
+            'longitude': details.longitude,
+            'description': details.description,
+            'images': [image.filename for image in details.images] if images else []
+            }
+    return jsonify(property_details)
