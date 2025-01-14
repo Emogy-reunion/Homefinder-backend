@@ -141,7 +141,7 @@ def logout():
     '''
     destroys the access and refresh cookies logging the user out of the session
     '''
-    response = ({'success': 'Logged out successfuly'})
+    response = jsonify({'success': 'Logged out successfuly'})
     unset_jwt_cookies(response)
     return response
 
