@@ -2,7 +2,7 @@
 contains routes that work on user profiles: display, update and delete profiles
 '''
 from flask import Blueprint, jsonify
-from model import db, User
+from model import db, Users
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 profile = Blueprint('profile', __name__)
@@ -17,7 +17,7 @@ def member_profile():
     user_id = get_jwt_identity()
 
     try:
-        user = db.session.get(User, user_id)
+        user = db.session.get(Users, user_id)
 
         if not user:
             return jsonify({'error': 'User not found!'})
