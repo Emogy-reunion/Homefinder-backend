@@ -8,7 +8,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 profile = Blueprint('profile', __name__)
 
 @profile.route('/member_profile', methods=['GET'])
-@jwt_required
+@jwt_required()
 def member_profile():
     '''
     retrieves the logged in user profiles
