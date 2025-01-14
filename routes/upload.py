@@ -13,6 +13,7 @@ post = Blueprint('post', __name__)
 def upload():
     '''
     route to allow users to upload properties
+    saves them to the database
     '''
     user_id = get_jwt_identity()
 
