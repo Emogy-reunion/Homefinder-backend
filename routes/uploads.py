@@ -38,7 +38,7 @@ def member_uploads_preview():
                 "page": paginated_results.page,
                 "pages": paginated_results.pages,
                 "per_page": paginated_results.per_page,
-                "next": paginated_results.next_num if paginated_results.has_next else None
+                "next": paginated_results.next_num if paginated_results.has_next else None,
                 "prev": paginated_results.prev_num if paginated_results.has_prev else None
                 }
             }
