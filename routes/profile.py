@@ -12,6 +12,7 @@ profile = Blueprint('profile', __name__)
 def member_profile():
     '''
     retrieves the logged in user profiles
+    returns appropriate response
     '''
     user_id = get_jwt_identity()
 

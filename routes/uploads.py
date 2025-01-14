@@ -12,6 +12,7 @@ posts = Blueprint('posts', __name__)
 def member_uploads_preview():
     '''
     loads posts posted by a specific user
+    returns the post and pagination details
     '''
 
     page = request.args.get('page', 1, type=int)
