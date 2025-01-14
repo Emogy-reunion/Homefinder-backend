@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 posts = Blueprint('posts', __name__)
 
 
-@posts.routes('/member_uploads_preview', methods=['GET'])
+@posts.route('/member_uploads_preview', methods=['GET'])
 @jwt_required()
 def member_uploads_preview():
     '''
@@ -38,7 +38,7 @@ def member_uploads_preview():
                 "page": paginated_results.page,
                 "pages": paginated_results.pages,
                 "per_page": paginated_results.per_page,
-                "next": paginated_results.next_num if paginated_results.has_next else None
+                "next": paginated_results.next_num if paginated_results.has_next else None,
                 "prev": paginated_results.prev_num if paginated_results.has_prev else None
                 }
             }
@@ -49,7 +49,8 @@ def member_uploads_preview():
         return jsonify({'error': 'Properties not found'}), 400
 
 
-@posts.routes('/member_uploads_details/<int:property_id>', methods=['GET'])
+@posts.route('/member_uploads_details/<int:property_id>', methods=['GET'])
+@jwt_required()
 def member_upload_details(property_id):
     '''
     Retrieves an item's details e.g map, description, images e.t.c

@@ -8,7 +8,7 @@ post = Blueprint('post', __name__)
 
 
 
-@post.route('/upload', method=['POST'])
+@post.route('/upload', methods=['POST'])
 @jwt_required()
 def upload():
     '''
