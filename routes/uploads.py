@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 posts = Blueprint('posts', __name__)
 
 
-@posts.routes('/member_uploads_preview', methods=['GET'])
+@posts.route('/member_uploads_preview', methods=['GET'])
 @jwt_required()
 def member_uploads_preview():
     '''
@@ -49,7 +49,8 @@ def member_uploads_preview():
         return jsonify({'error': 'Properties not found'}), 400
 
 
-@posts.routes('/member_uploads_details/<int:property_id>', methods=['GET'])
+@posts.route('/member_uploads_details/<int:property_id>', methods=['GET'])
+@jwt_required()
 def member_upload_details(property_id):
     '''
     Retrieves an item's details e.g map, description, images e.t.c
