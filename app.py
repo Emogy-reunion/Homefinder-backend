@@ -10,6 +10,7 @@ from routes.verification import verify
 from routes.upload import post
 from routes.reset_password import reset
 from routes.uploads import posts
+from routes.profile import profile
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 
@@ -34,6 +35,7 @@ app.register_blueprint(verify)
 app.register_blueprint(reset)
 app.register_blueprint(post)
 app.register_blueprint(posts)
+app.register_blueprint(profile)
 
 with app.app_context():
     db.create_all()
