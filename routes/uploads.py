@@ -124,3 +124,24 @@ def update_property(property_id):
 
     db.session.commit()
     return jsonify({'success': 'Property updated successfully!'})
+
+
+@posts.route('/delete_property<int:property_id>', methods=['DELETE'])
+@jwt_required()
+def delete_property(property_id):
+    '''
+    deletes a specific property listing from the database
+    '''
+
+    try:
+        property_listing = Properties.query(id=property_id).first()
+
+        if not property_listing:
+            return jsonify({'error': 'Property not found!'}), 404
+        
+        db.session.delete(property_listing)
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'An unexpected error occured. Please try again!'})
+    db.session.commit()
+    return jsonify({'success': 'Property deleted successfully!'})
