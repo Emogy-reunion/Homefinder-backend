@@ -4,7 +4,7 @@ Holds routes that conduct property searches
 from flask import Blueprint, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from model import db, Users, Images, Properties
-from sqlalchemy orm import selectinload
+from sqlalchemy.orm import selectinload
 
 
 find = Blueprint('find', __name__)
