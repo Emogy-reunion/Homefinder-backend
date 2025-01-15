@@ -73,7 +73,7 @@ def member_property_details(property_id):
             }
     return jsonify(property_details)
 
-@post.route('/update_property/<int:property_id>', methods=['PATCH'])
+@posts.route('/update_property/<int:property_id>', methods=['PATCH'])
 @jwt_required()
 def update_property(property_id):
     '''
@@ -123,4 +123,4 @@ def update_property(property_id):
     db.session.commit()
     return jsonify({'success': 'Property updated successfully!'})
 
-    
+ i  
