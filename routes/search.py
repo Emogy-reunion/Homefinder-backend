@@ -33,7 +33,7 @@ def member_search():
         properties = properties.filter(Properties.price >= minimum_price)
 
     if maximum_price is not None:
-        properties = properties.filter(Properties.price =< maximum_price)
+        properties = properties.filter(Properties.price <= maximum_price)
 
     if bedrooms is not None:
         bedrooms = properties.filter(Properties.bedrooms == bedrooms)
