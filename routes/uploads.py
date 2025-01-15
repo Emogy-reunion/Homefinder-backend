@@ -73,6 +73,7 @@ def member_property_details(property_id):
             }
     return jsonify(property_details)
 
+
 @posts.route('/update_property/<int:property_id>', methods=['PATCH'])
 @jwt_required()
 def update_property(property_id):
@@ -120,7 +121,6 @@ def update_property(property_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': 'An unexpected error occured. Please try again!'})
+
     db.session.commit()
     return jsonify({'success': 'Property updated successfully!'})
-
- i  
