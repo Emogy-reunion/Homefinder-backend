@@ -31,7 +31,7 @@ def rent():
             rentals.append({
                     'location': rental.location,
                     'bedrooms': rental.bedrooms,
-                    'price': rental.price
+                    'price': rental.price,
                     'image': [image.filename for image in rental.images[0]] if images else []
                     })
         response = {
