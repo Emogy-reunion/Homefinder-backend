@@ -15,7 +15,7 @@ def rent():
     paginates them and returns them to the user
     '''
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get)'per_page', 10, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
 
     properties = Properties.query.filter_by(purpose='rent').options(selectinload(Properties.images))
 
