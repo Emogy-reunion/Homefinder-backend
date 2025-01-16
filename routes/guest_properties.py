@@ -49,7 +49,7 @@ def rent():
         return jsonify(response)
 
 
-@listings.route('/buy', method=['GET'])
+@listings.route('/buy', methods=['GET'])
 def buy():
     '''
     retrieves properties that are for sale from the database
