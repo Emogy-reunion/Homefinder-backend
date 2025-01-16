@@ -1,5 +1,6 @@
 '''
-Run the application
+Runs the application
+Initializes the database
 Handles login management, creating initial admins and running the application
 '''
 from create_app import create_app
@@ -12,6 +13,7 @@ from routes.search import find
 from routes.reset_password import reset
 from routes.uploads import posts
 from routes.profile import profile
+from routes.guest_properties import listings
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 
@@ -38,6 +40,7 @@ app.register_blueprint(post)
 app.register_blueprint(posts)
 app.register_blueprint(profile)
 app.register_blueprint(find)
+app.register_blueprint(listings)
 
 with app.app_context():
     db.create_all()
