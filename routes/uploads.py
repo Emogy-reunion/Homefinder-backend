@@ -22,8 +22,12 @@ def member_property_preview():
     paginated_results = listings.paginate(page=page, per_page=per_page)
     
     properties = []
-    for item in paginated_results.items:
-        properties.append({
+
+    if not paginated_results.items:
+        return jsonify({'error': 'Property not found'})
+    else:
+        for item in paginated_results.items:
+            properties.append({
                 'id': item.id,
                 'location': item.location,
                 'price': item.price,
@@ -31,23 +35,18 @@ def member_property_preview():
                 'image': [image.filename for image in item.images[0]] if images else []
                 })
 
-    response = {
-            'properties': properties,
-            'pagination': {
-                "total": paginated_results.total,
-                "page": paginated_results.page,
-                "pages": paginated_results.pages,
-                "per_page": paginated_results.per_page,
-                "next": paginated_results.next_num if paginated_results.has_next else None,
-                "prev": paginated_results.prev_num if paginated_results.has_prev else None
+        response = {
+                'properties': properties,
+                'pagination': {
+                    "total": paginated_results.total,
+                    "page": paginated_results.page,
+                    "pages": paginated_results.pages,
+                    "per_page": paginated_results.per_page,
+                    "next": paginated_results.next_num if paginated_results.has_next else None,
+                    "prev": paginated_results.prev_num if paginated_results.has_prev else None
+                    }
                 }
-            }
-
-    if response:
         return jsonify(response)
-    else:
-        return jsonify({'error': 'Properties not found'}), 400
-
 
 @posts.route('/member_property_details/<int:property_id>', methods=['GET'])
 @jwt_required()
