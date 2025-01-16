@@ -39,8 +39,10 @@ app.register_blueprint(post)
 app.register_blueprint(posts)
 app.register_blueprint(profile)
 app.register_blueprint(find)
-app.register_blueprint(listings)
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/factory
 
 with app.app_context():
     db.create_all()
