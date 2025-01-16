@@ -1,5 +1,6 @@
 '''
 Runs the application
+Initializes the database
 Handles login management, creating initial admins and running the application
 '''
 from create_app import create_app
