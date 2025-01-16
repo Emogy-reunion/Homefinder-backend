@@ -1,5 +1,5 @@
 '''
-Run the application
+Runs the application
 Handles login management, creating initial admins and running the application
 '''
 from create_app import create_app
