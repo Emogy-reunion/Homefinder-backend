@@ -30,6 +30,7 @@ def rent():
     else:
         for rental in paginated_results.items:
             rentals.append({
+                    'id': rental.id,
                     'location': rental.location,
                     'bedrooms': rental.bedrooms,
                     'price': rental.price,
@@ -69,6 +70,7 @@ def buy():
     else:
         for listing in paginated_results.items:
             listings.append({
+                'id': listing.id,
                 'location': listing.location,
                 'bedrooms': listing.bedrooms,
                 'price': listing.price,
@@ -85,4 +87,30 @@ def buy():
                     'per_page': paginated_results.per_page
                     }
                 }
+
+@listings.route('/listing_details/<int: property_id>', methods=['GET'])
+def listing_details(property_id):
+    '''
+    retrieves property details from the database
+    '''
+
+    listing = Properties.query.filter_by(id=property_id).first()
+
+    if not listing:
+        return jsonify({'error': 'Property not found!'})
+
+    response = {
+            'user_id': listing.user_id,
+            'location': listing.location,
+            'price': listing.price,
+            'bedrooms': listing.bedrooms,
+            'agency': listing.agency,
+            'latitude': listing.latitude,
+            'longitude': listing.longitude,
+            'purpose': listing.purpose,
+            'images': [image.filename for image in rental.images] if listing.images else []
+            }
+    return jsonify(response)
+
+
 
