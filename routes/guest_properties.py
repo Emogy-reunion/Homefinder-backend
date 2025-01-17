@@ -88,7 +88,7 @@ def buy():
                     }
                 }
 
-@listings.route('/listing_details/<int: property_id>', methods=['GET'])
+@listings.route('/listing_details/<int:property_id>', methods=['GET'])
 def listing_details(property_id):
     '''
     retrieves property details from the database
