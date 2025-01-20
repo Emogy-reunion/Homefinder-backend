@@ -76,9 +76,9 @@ def guest_search():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     location = request.args.get('location')
-    bedrooms = request.args.get('bedrooms')
-    minimum_price = request.args.get('minimum_price')
-    maximum_price = request.args.get('maximum_price')
+    bedrooms = request.args.get('bedrooms', type=int)
+    minimum_price = request.args.get('minimum_price', type=float)
+    maximum_price = request.args.get('maximum_price', type=float)
 
     properties = Properties.query
 
