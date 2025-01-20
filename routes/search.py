@@ -43,7 +43,7 @@ def member_search():
     paginated_results = properties.paginate(page=page, per_page=per_page)
 
     property_listings = []
-    for listing in paginated_results:
+    for listing in paginated_results.items:
         property_listings.append({
             'id': listing.id,
             'location': listing.location,
@@ -52,7 +52,7 @@ def member_search():
             'image': [image.filename for image in listing.images[0]] if images else []
             })
 
-    if not property_listings:
+    if not paginated_results.items:
         return jsonify({'error': 'Properties not available!'})
     else:
         response = {
