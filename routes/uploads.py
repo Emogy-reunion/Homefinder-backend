@@ -32,6 +32,7 @@ def member_property_preview():
                 'location': item.location,
                 'price': item.price,
                 'bedrooms': item.bedrooms,
+                'status': item.status,
                 'image': [image.filename for image in item.images[0]] if images else []
                 })
 
@@ -68,6 +69,7 @@ def member_property_details(property_id):
             'latitude': details.latitude,
             'longitude': details.longitude,
             'description': details.description,
+            'status': details.status,
             'images': [image.filename for image in details.images] if images else []
             }
     return jsonify(property_details)
@@ -88,6 +90,7 @@ def update_property(property_id):
     latitude = data.latitude
     longitude = data.longitude
     description = data.description
+    status = data.status
 
     try:
         property_listing = Properties.query(id=property_id).first()
@@ -114,7 +117,10 @@ def update_property(property_id):
             property_listing.longitude = longitude
 
         if description:
-            propety_listing.description = description
+            property_listing.description = description
+
+        if status:
+            property_listing.status = status
 
         db.session.add(property_listing)
     except Exception as e:

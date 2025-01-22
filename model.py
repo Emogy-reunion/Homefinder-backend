@@ -80,13 +80,14 @@ class Properties(db.Model):
     purpose = db.Column(db.String(30), nullable=False)
     latitude = db.Column(db.String(150), nullable=False)
     longitude = db.Column(db.String(150), nullable=False)
+    status = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=False)
     posted_at = db.Column(db.DateTime, default=datetime.utcnow())
     user = db.relationship('Users', back_populates='properties', lazy=True)
     images = db.relationship('Images', backref='property', lazy=True)
 
     def __init__(self, user_id, location, price, bedrooms, purpose,
-                 latitude, longitude, description):
+                 latitude, longitude, description, status):
 
         self.user_id = user_id
         self.location = location
@@ -96,6 +97,7 @@ class Properties(db.Model):
         self.latitude = latitude
         self.longitude = longitude
         self.description = description
+        self.status = status
 
 
 class Images(db.Model):

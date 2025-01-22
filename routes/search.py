@@ -20,6 +20,7 @@ def member_search():
     minimum_price = request.args.get('minimum_price', type=float)
     maximum_price = request.args.get('maximum_price', type=float)
     bedrooms = request.args.get('bedrooms', type=int)
+    status = request.args.get('status')
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10)
@@ -38,6 +39,9 @@ def member_search():
     if bedrooms is not None:
         bedrooms = properties.filter(Properties.bedrooms == bedrooms)
 
+    if status is not None:
+        status = properties.filter(Properties.status.ilike(f"%{status}"))
+
 
     properties = properties.query.options(selectinload(Properties.images))
     paginated_results = properties.paginate(page=page, per_page=per_page)
@@ -53,6 +57,7 @@ def member_search():
                 'location': listing.location,
                 'price': listing.price,
                 'bedrooms': listing.bedrooms,
+                'status': listing.status,
                 'image': [image.filename for image in listing.images[0]] if images else []
                 })
 
@@ -79,6 +84,7 @@ def guest_search():
     bedrooms = request.args.get('bedrooms', type=in8t)
     minimum_price = request.args.get('minimum_price', type=float)
     maximum_price = request.args.get('maximum_price', type=float)
+    status = request.args.get('status')
 
     properties = Properties.query
 
@@ -94,6 +100,9 @@ def guest_search():
     if bedrooms is not None:
         properties = properties.filter(Properties.bedrooms == bedrooms)
 
+    if status is not None:
+        properties = properties.filter(Properties.status.ilike(f"%{status}"))
+
     properties = properties.query.options(selectinload(Properties.images))
     paginated_results = properties.paginate(page=page, per_page=per_page)
 
@@ -107,6 +116,7 @@ def guest_search():
                 'bedrooms': listing.bedrooms,
                 'price': listing.price,
                 'location': listing.location,
+                'status': listing.status,
                 'image': [image.filename for image in listing.images[0]] if listing.images else []
                 })
     response = {

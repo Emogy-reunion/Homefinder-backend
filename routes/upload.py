@@ -24,6 +24,7 @@ def upload():
     latitude = request.form.get('latitude')
     longitude = request.form.get('longitude')
     description = request.form.get('description')
+    status = request.form.get('status')
 
     errors = {}
 
@@ -49,7 +50,10 @@ def upload():
         errors['description'] = 'Description is required!'
 
     if not request.files:
-        return jsonify({'error': 'Please select property images!'})
+        errors[files] = 'Please select property images!'
+
+    if not status:
+        errors[files] = 'Status is required!'
 
     images = request.files.getlist('files')
     if not images:
@@ -61,7 +65,7 @@ def upload():
     try:
         new_property = Properties(user_id=user_id, location=location, price=price,
                                   bedrooms=bedrooms, purpose=purpose, latitude=latitude,
-                                  longitude=longitude, description=description)
+                                  longitude=longitude, description=description, status=status)
         db.session.add(new_property)
     except Exception as e:
         db.session.rollback()
