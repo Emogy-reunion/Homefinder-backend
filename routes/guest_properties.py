@@ -34,6 +34,7 @@ def rent():
                     'location': rental.location,
                     'bedrooms': rental.bedrooms,
                     'price': rental.price,
+                    'status': rental.status,
                     'image': [image.filename for image in rental.images[0]] if rental.images else []
                     })
         response = {
@@ -74,6 +75,7 @@ def buy():
                 'location': listing.location,
                 'bedrooms': listing.bedrooms,
                 'price': listing.price,
+                'status': listing.status,
                 'image': [image.filename for image in listing.images[0]] if listing.images else []
                 })
         response = {
@@ -108,6 +110,7 @@ def listing_details(property_id):
             'latitude': listing.latitude,
             'longitude': listing.longitude,
             'purpose': listing.purpose,
+            'status': listing.status,
             'images': [image.filename for image in rental.images] if listing.images else []
             }
     return jsonify(response)
