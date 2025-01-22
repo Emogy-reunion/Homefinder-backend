@@ -87,7 +87,7 @@ class Properties(db.Model):
     images = db.relationship('Images', backref='property', lazy=True)
 
     def __init__(self, user_id, location, price, bedrooms, purpose,
-                 latitude, longitude, description):
+                 latitude, longitude, description, status):
 
         self.user_id = user_id
         self.location = location
@@ -97,6 +97,7 @@ class Properties(db.Model):
         self.latitude = latitude
         self.longitude = longitude
         self.description = description
+        self.status = status
 
 
 class Images(db.Model):
