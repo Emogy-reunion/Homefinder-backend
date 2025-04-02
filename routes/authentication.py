@@ -80,36 +80,35 @@ def login():
 
     errors = {}
 
-    if not email:
-        errors[email] = 'Email is required!'
-    else:
-        try:
-            valid = validate_email(email)
-        except EmailNotValidError as e:
-            errors['email'] = 'Invalid email format!'
+    email_errors = check_email(email)
 
-    if not password:
-        errors['password'] = 'Password is required!'
+    if email_errors:
+        errors['email'] = email_errors
+
 
     if errors:
-        return jsonify({'errors': errors})
+        return jsonify({'errors': errors}), 400
 
-    user = Users.query.filter_by(email=email).first()
+    user = None
+    try:
+        user = Users.query.filter_by(email=email).first()]
+    except Exception as e:
+        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
 
     if not user:
-        return jsonify({"error": "Account with this email doesn't exist"})
+        return jsonify({"error": "An account with this email doesn't exists!"}), 409
     else:
         if user.verified == True:
             if user.check_password(password):
                 access_token = create_access_token(identity=user.id)
                 refresh_token = create_refresh_token(identity=user.id)
 
-                response = jsonify({'success': 'Logged in successfully!'})
+                response = jsonify({'success': 'Logged in successfully!'}), 200
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
                 return response
             else:
-                return jsonify({'error': 'Incorrect password. Please try again!'})
+                return jsonify({'error': 'Incorrect password. Please try again!'}), 409
         else:
             return jsonify({'unverified': 'Your account in unverified. Verify before login'})
 
