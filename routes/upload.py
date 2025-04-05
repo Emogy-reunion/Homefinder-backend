@@ -87,9 +87,8 @@ def upload():
                 db.session.add(new_image)
             else:
                 return jsonify({'error': 'Invalid file extension!'})
+        db.session.commit()
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': 'Failed to upload. Please try again'})
-
-    db.session.commit()
     return jsonify({'error': 'Property uploaded successfully!'})
