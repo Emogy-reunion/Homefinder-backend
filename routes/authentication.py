@@ -91,7 +91,7 @@ def login():
 
     user = None
     try:
-        user = Users.query.filter_by(email=email).first()]
+        user = Users.query.filter_by(email=email).first()
     except Exception as e:
         return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
 
