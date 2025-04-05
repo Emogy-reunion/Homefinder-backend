@@ -118,11 +118,14 @@ def refresh():
     '''
     creates a new access token using refresh token
     '''
-    current_user_id = get_jwt_identity()
-    new_access_token = create_access_token(identity=current_user_id)
-    response = jsonify({'success': 'Successfully created access token'})
-    set_access_cookies(access_token)
-    return response
+    try:
+        current_user_id = get_jwt_identity()
+        new_access_token = create_access_token(identity=current_user_id)
+        response = jsonify({'success': 'Successfully created access token'})
+        set_access_cookies(access_token)
+        return response
+    except Exception as e:
+        return jsonify({"erro": 'An unexpected error occured. Please try again!'})
 
 @auth.route('/logout', methods=['POST'])
 @jwt_required()
