@@ -91,7 +91,7 @@ def login():
 
     user = None
     try:
-        user = Users.query.filter_by(email=email).first()]
+        user = Users.query.filter_by(email=email).first()
     except Exception as e:
         return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
 
@@ -110,7 +110,7 @@ def login():
             else:
                 return jsonify({'error': 'Incorrect password. Please try again!'}), 409
         else:
-            return jsonify({'unverified': 'Your account in unverified. Verify before login'})
+            return jsonify({'unverified': 'Your account in unverified. Verify before login!'}), 401
 
 @auth.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
@@ -118,11 +118,14 @@ def refresh():
     '''
     creates a new access token using refresh token
     '''
-    current_user_id = get_jwt_identity()
-    new_access_token = create_access_token(identity=current_user_id)
-    response = jsonify({'success': 'Successfully created access token'})
-    set_access_cookies(access_token)
-    return response
+    try:
+        current_user_id = get_jwt_identity()
+        new_access_token = create_access_token(identity=current_user_id)
+        response = jsonify({'success': 'Successfully created access token'}), 201
+        set_access_cookies(access_token)
+        return response
+    except Exception as e:
+        return jsonify({"error": 'An unexpected error occured. Please try again!'}), 500
 
 @auth.route('/logout', methods=['POST'])
 @jwt_required()
@@ -130,9 +133,12 @@ def logout():
     '''
     destroys the access and refresh cookies logging the user out of the session
     '''
-    response = jsonify({'success': 'Logged out successfuly'})
-    unset_jwt_cookies(response)
-    return response
+    try:
+        response = jsonify({'success': 'Logged out successfuly'}), 200
+        unset_jwt_cookies(response)
+        return response
+    except Exception as e:
+        return jsonify({'error': 'An unexpected error occured. Please try again'}), 500
 
 @auth.route('/protected', methods=['POST'])
 @jwt_required()
