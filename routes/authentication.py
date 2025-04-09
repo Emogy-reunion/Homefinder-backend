@@ -57,43 +57,38 @@ def login():
     authenticates the user
     creates an access token
     '''
-    data = request.json
-    email = data.get('email').lower()
-    password = data.get('password')
 
-    errors = {}
+    form = LoginForm(request.get_json)
 
-    email_errors = check_email(email)
+    if form.validate():
+        email = form.email.data
+        password = form.password.data
 
-    if email_errors:
-        errors['email'] = email_errors
+        user = None
+    
+        try:
+            user = Users.query.filter_by(email=email).first()
+        except Exception as e:
+            return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
 
-
-    if errors:
-        return jsonify({'errors': errors}), 400
-
-    user = None
-    try:
-        user = Users.query.filter_by(email=email).first()
-    except Exception as e:
-        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
-
-    if not user:
+        if not user:
         return jsonify({"error": "An account with this email doesn't exists!"}), 409
-    else:
-        if user.verified == True:
-            if user.check_password(password):
-                access_token = create_access_token(identity=user.id)
-                refresh_token = create_refresh_token(identity=user.id)
-
-                response = jsonify({'success': 'Logged in successfully!'}), 200
-                set_access_cookies(response, access_token)
-                set_refresh_cookies(response, refresh_token)
-                return response
-            else:
-                return jsonify({'error': 'Incorrect password. Please try again!'}), 409
         else:
-            return jsonify({'unverified': 'Your account in unverified. Verify before login!'}), 401
+            if user.verified == True:
+                if user.check_password(password):
+                    access_token = create_access_token(identity=user.id)
+                    refresh_token = create_refresh_token(identity=user.id)
+
+                    response = jsonify({'success': 'Logged in successfully!'}), 200
+                    set_access_cookies(response, access_token)
+                    set_refresh_cookies(response, refresh_token)
+                    return response, 200
+                else:
+                    return jsonify({'error': 'Incorrect password. Please try again!'}), 409
+            else:
+                return jsonify({'unverified': 'Your account in unverified. Verify before login!'}), 401
+    else:
+        return jsonify({'errors': form.errors})
 
 @auth.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
