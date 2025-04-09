@@ -31,14 +31,10 @@ def upload():
                                   bedrooms=bedrooms, purpose=purpose, latitude=latitude,
                                   longitude=longitude, description=description, status=status)
         db.session.add(new_property)
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': 'An unexpected error ocurred. Please try again!'})
+        db.session.flush()
 
-    db.session.commit()
-
-    uploads = []
-    try:
+        uploads = []
+        
         for image in images:
             if image and allowed_file(image.filename):
                 '''
@@ -50,9 +46,13 @@ def upload():
                 new_image = Images(property_id=new_property.id, filename=filename)
                 db.session.add(new_image)
             else:
-                return jsonify({'error': 'Invalid file extension!'})
+                return jsonify({'error': 'Invalid file extension!'}), 400
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': 'Failed to upload. Please try again'})
-    return jsonify({'error': 'Property uploaded successfully!'})
+        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
+    
+    if uploads:
+        return jsonify({'success': 'Property uploaded successfully!'}), 201
+    else:
+        return jsonify({'error': 'Failed to upload property. Please try again!'}
