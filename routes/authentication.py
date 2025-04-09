@@ -74,19 +74,22 @@ def login():
         if not user:
         return jsonify({"error": "An account with this email doesn't exists!"}), 409
         else:
-            if user.verified == True:
-                if user.check_password(password):
-                    access_token = create_access_token(identity=user.id)
-                    refresh_token = create_refresh_token(identity=user.id)
+            try:
+                if user.verified == True:
+                    if user.check_password(password):
+                        access_token = create_access_token(identity=user.id)
+                        refresh_token = create_refresh_token(identity=user.id)
 
-                    response = jsonify({'success': 'Logged in successfully!'}), 200
-                    set_access_cookies(response, access_token)
-                    set_refresh_cookies(response, refresh_token)
-                    return response, 200
+                        response = jsonify({'success': 'Logged in successfully!'}), 200
+                        set_access_cookies(response, access_token)
+                        set_refresh_cookies(response, refresh_token)
+                        return response, 200
+                    else:
+                        return jsonify({'error': 'Incorrect password. Please try again!'}), 409
                 else:
-                    return jsonify({'error': 'Incorrect password. Please try again!'}), 409
-            else:
-                return jsonify({'unverified': 'Your account in unverified. Verify before login!'}), 401
+                    return jsonify({'unverified': 'Your account in unverified. Verify before login!'}), 401
+            except Exception as e:
+                return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
     else:
         return jsonify({'errors': form.errors})
 
