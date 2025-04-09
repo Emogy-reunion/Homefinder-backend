@@ -132,10 +132,10 @@ def update_property(property_id):
         db.session.add(property_listing)
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': 'An unexpected error occured. Please try again!'})
+        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
 
     db.session.commit()
-    return jsonify({'success': 'Property updated successfully!'})
+    return jsonify({'success': 'Property updated successfully!'}), 200
 
 
 @posts.route('/delete_property<int:property_id>', methods=['DELETE'])
@@ -152,8 +152,8 @@ def delete_property(property_id):
             return jsonify({'error': 'Property not found!'}), 404
         
         db.session.delete(property_listing)
+        db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': 'An unexpected error occured. Please try again!'})
-    db.session.commit()
-    return jsonify({'success': 'Property deleted successfully!'})
+        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
+    return jsonify({'success': 'Property deleted successfully!'}), 200
