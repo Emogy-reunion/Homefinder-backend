@@ -4,9 +4,9 @@ This file contains routes that handle user authentication
 from flask import Blueprint, request, render_template, redirect, jsonify
 from model import db, Users
 from utils.verification import send_verification_email
-from utils.validation import validate_firstname, validate_lastname, check_email
 import re
 from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, jwt_required, get_jwt_identity, unset_jwt_cookies
+from forms import RegistrationForm, LoginForm
 
 auth = Blueprint('auth', __name__)
 
@@ -17,55 +17,38 @@ def register():
     It renders the form that collects the data
     It extractst the data and saves it to the database
     '''
-    data = request.json
+    form = RegistrationForm(request.get_json)
 
+    if form.validate():
+        firstname = form.firstname.data.lower()
+        lastname = form.lastname.data.lower()
+        agency = form.agency.data.lower()
+        email = form.email.data.lower()
+        password = form.password.data
 
-    firstname = data.get('firstname').lower()
-    lastname = data.get('lastname').lower()
-    agency = data.get('agency').lower()
-    email = data.get('email').lower()
-    password = data.get('password')
+        user = None
 
-
-    errors = {}
-
-    firstname_errors = validate_firstname(firstname)
-    lastname_errors = validate_lastname(lastname)
-    email_errors = check_email(email)
-
-    if firstname_errors:
-        errors['firstname'] = firstname_errors
-
-    if lastname_errors:
-        errors['lastname'] = lastname_errors
-
-    if email_errors:
-        errors['email'] = email_errors
-
-    if errors:
-        return jsonify({'errors': errors}), 400
-
-    user = None
-
-    try:
-        user = Users.query.filter_by(email=email).first()
-    except Exception as e:
-        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
-
-    if user:
-        return jsonify({'error': 'An account associated with this email exists'}), 409
-    else:
         try:
-            new_user = Users(firstname=firstname, lastname=lastname, 
-                             agency=agency, email=email, password=password)
-            db.session.add(new_user)
-            db.session.commit()
+            user = Users.query.filter_by(email=email).first()
         except Exception as e:
-            db.session.rollback()
             return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
 
-        send_verification_email(new_user)
-        return jsonify({'success': 'Your account has been successfully created. Please check your email for a verification link to complete the registration process.'}), 201
+        if user:
+            return jsonify({'error': 'An account associated with this email exists'}), 409
+        else:
+            try:
+                new_user = Users(firstname=firstname, lastname=lastname, 
+                                 agency=agency, email=email, password=password)
+                db.session.add(new_user)
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
+
+            send_verification_email(new_user)
+            return jsonify({'success': 'Your account has been successfully created. Please check your email for a verification link to complete the registration process.'}), 201
+    else:
+        return jsonify({'errors': form.errors})
 
 
 @auth.route('/login', methods=['POST'])
