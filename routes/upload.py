@@ -26,55 +26,15 @@ def upload():
     description = request.form.get('description')
     status = request.form.get('status')
 
-    errors = {}
-
-    if not location:
-        errors['location'] = 'Location is required!'
-
-    if not price:
-        errors['price'] = 'Price is required!'
-
-    if not bedrooms:
-        errors['bedrooms'] = 'Bedrooms is required!'
-
-    if not purpose:
-        errors['purpose'] = 'Purpose is required!'
-
-    if not latitude:
-        errors['latitude'] = 'Latitude is required!'
-
-    if not longitude:
-        errors['longitude'] = 'Longitude is required!'
-
-    if not description:
-        errors['description'] = 'Description is required!'
-
-    if not request.files:
-        errors[files] = 'Please select property images!'
-
-    if not status:
-        errors[files] = 'Status is required!'
-
-    images = request.files.getlist('files')
-    if not images:
-        errors['images'] = 'Please select at least one file!'
-
-    if errors:
-        return jsonify({'errors': errors})
-
     try:
         new_property = Properties(user_id=user_id, location=location, price=price,
                                   bedrooms=bedrooms, purpose=purpose, latitude=latitude,
                                   longitude=longitude, description=description, status=status)
         db.session.add(new_property)
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': 'An unexpected error ocurred. Please try again!'})
+        db.session.flush()
 
-    db.session.commit()
-
-    uploads = []
-    try:
+        uploads = []
+        
         for image in images:
             if image and allowed_file(image.filename):
                 '''
@@ -86,9 +46,13 @@ def upload():
                 new_image = Images(property_id=new_property.id, filename=filename)
                 db.session.add(new_image)
             else:
-                return jsonify({'error': 'Invalid file extension!'})
+                return jsonify({'error': 'Invalid file extension!'}), 400
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': 'Failed to upload. Please try again'})
-    return jsonify({'error': 'Property uploaded successfully!'})
+        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
+    
+    if uploads:
+        return jsonify({'success': 'Property uploaded successfully!'}), 201
+    else:
+        return jsonify({'error': 'Failed to upload property. Please try again!'}
