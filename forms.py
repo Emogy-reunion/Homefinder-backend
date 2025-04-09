@@ -2,7 +2,7 @@
 Defines classes that validate the applications form  input
 '''
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, FloatField, TextField, IntegerField
+from wtforms import StringField, PasswordField, FloatField, TextField, IntegerField, MultipleFileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp, NumberRange
 
 class RegistrationForm(FlaskForm):
@@ -68,4 +68,6 @@ class PropertyUploadForm(FlaskForm):
     status = StingField('Status', validators=[
         DataRequired()])
     description = TextField('Description', validators=[
+        DataRequired()])
+    images = MultipleFileField('Images', validators=[
         DataRequired()])
