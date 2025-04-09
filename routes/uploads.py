@@ -17,37 +17,41 @@ def member_property_preview():
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 12, type=int)
-    user_id = get_jwt_identity()
-    listings = Properties.query.filter_by(user_id=user_id).options(selectinload(Properties.images))
-    paginated_results = listings.paginate(page=page, per_page=per_page)
+
+    try:
+        user_id = get_jwt_identity()
+        listings = Properties.query.filter_by(user_id=user_id).options(selectinload(Properties.images))
+        paginated_results = listings.paginate(page=page, per_page=per_page)
     
-    properties = []
+        properties = []
 
-    if not paginated_results.items:
-        return jsonify({'error': 'Property not found'})
-    else:
-        for item in paginated_results.items:
-            properties.append({
-                'id': item.id,
-                'location': item.location,
-                'price': item.price,
-                'bedrooms': item.bedrooms,
-                'status': item.status,
-                'image': [image.filename for image in item.images[0]] if images else []
-                })
+        if not paginated_results.items:
+            return jsonify({'error': 'Property not found!'}), 404
+        else:
+            for item in paginated_results.items:
+                properties.append({
+                    'id': item.id,
+                    'location': item.location,
+                    'price': item.price,
+                    'bedrooms': item.bedrooms,
+                    'status': item.status,
+                    'image': [image.filename for image in item.images[0]] if images else []
+                    })
 
-        response = {
-                'properties': properties,
-                'pagination': {
-                    "total": paginated_results.total,
-                    "page": paginated_results.page,
-                    "pages": paginated_results.pages,
-                    "per_page": paginated_results.per_page,
-                    "next": paginated_results.next_num if paginated_results.has_next else None,
-                    "prev": paginated_results.prev_num if paginated_results.has_prev else None
+            response = {
+                    'properties': properties,
+                    'pagination': {
+                        "total": paginated_results.total,
+                        "page": paginated_results.page,
+                        "pages": paginated_results.pages,
+                        "per_page": paginated_results.per_page,
+                        "next": paginated_results.next_num if paginated_results.has_next else None,
+                        "prev": paginated_results.prev_num if paginated_results.has_prev else None
+                        }
                     }
-                }
-        return jsonify(response)
+            return jsonify(response), 200
+    except Exception as e:
+        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
 
 @posts.route('/member_property_details/<int:property_id>', methods=['GET'])
 @jwt_required()
@@ -55,24 +59,27 @@ def member_property_details(property_id):
     '''
     Retrieves an item's details e.g map, description, images e.t.c
     '''
-    details = Properties.query.filter_by(id=property_id).options(selectionload(Properties.images)).first()
+    try:
+        details = Properties.query.filter_by(id=property_id).options(selectionload(Properties.images)).first()
 
-    if not details:
-        return jsonify({'error': 'Property not found'}), 404
+        if not details:
+            return jsonify({'error': 'Property not found'}), 404
 
-    property_details = {
-            'id': details.id,
-            'location': details.location,
-            'price': details.price,
-            'bedrooms': details.bedrooms,
-            'purpose': details.purpose,
-            'latitude': details.latitude,
-            'longitude': details.longitude,
-            'description': details.description,
-            'status': details.status,
-            'images': [image.filename for image in details.images] if images else []
-            }
-    return jsonify(property_details)
+        property_details = {
+                'id': details.id,
+                'location': details.location,
+                'price': details.price,
+                'bedrooms': details.bedrooms,
+                'purpose': details.purpose,
+                'latitude': details.latitude,
+                'longitude': details.longitude,
+                'description': details.description,
+                'status': details.status,
+                'images': [image.filename for image in details.images] if images else []
+                }
+        return jsonify(property_details)
+    except Exception as e:
+        return jsonify('error': 'An unexpected error occured. Please try again!'})
 
 
 @posts.route('/update_property/<int:property_id>', methods=['PATCH'])
@@ -125,10 +132,10 @@ def update_property(property_id):
         db.session.add(property_listing)
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': 'An unexpected error occured. Please try again!'})
+        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
 
     db.session.commit()
-    return jsonify({'success': 'Property updated successfully!'})
+    return jsonify({'success': 'Property updated successfully!'}), 200
 
 
 @posts.route('/delete_property<int:property_id>', methods=['DELETE'])
@@ -145,8 +152,8 @@ def delete_property(property_id):
             return jsonify({'error': 'Property not found!'}), 404
         
         db.session.delete(property_listing)
+        db.session.commit()
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': 'An unexpected error occured. Please try again!'})
-    db.session.commit()
-    return jsonify({'success': 'Property deleted successfully!'})
+        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
+    return jsonify({'success': 'Property deleted successfully!'}), 200
