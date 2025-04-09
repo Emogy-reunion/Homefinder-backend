@@ -3,7 +3,7 @@ Defines classes that validate the applications form  input
 '''
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
 
 class RegistrationForm(FlaskForm):
     '''
@@ -24,6 +24,7 @@ class RegistrationForm(FlaskForm):
         Length(min=2, max=45, message='Email must be between 6 and 45 letters!')])
     password = PasswordField('Password', validators=[
         DataRequired(),
+        Length(min=8, message="Password must be at least 8 characters long."),
         Regexp(r'(?=.*[A-Z])', message="Password must contain at least one uppercase letter."),
         Regexp(r'(?=.*[a-z])', message="Password must contain at least one lowercase letter."),
         Regexp(r'(?=.*\W)', message="Password must contain at least one special character.")
@@ -33,3 +34,15 @@ class RegistrationForm(FlaskForm):
         EqualTo('password', message='Passwords must match!')])
 
 
+class LoginForm(FlaskForm):
+    '''
+    validates the login form fields data
+    '''
+    email = StringField('Email', validators=[
+        DataRequired(),
+        Email(),
+        Length(min=8, message="Password must be at least 8 characters long.")
+        ])
+    password = PasswordField('Password', validators=[
+        DataRequired(),
+        Length(min=8, message="Password must be at least 8 characters long."),
