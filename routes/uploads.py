@@ -17,37 +17,41 @@ def member_property_preview():
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 12, type=int)
-    user_id = get_jwt_identity()
-    listings = Properties.query.filter_by(user_id=user_id).options(selectinload(Properties.images))
-    paginated_results = listings.paginate(page=page, per_page=per_page)
+
+    try:
+        user_id = get_jwt_identity()
+        listings = Properties.query.filter_by(user_id=user_id).options(selectinload(Properties.images))
+        paginated_results = listings.paginate(page=page, per_page=per_page)
     
-    properties = []
+        properties = []
 
-    if not paginated_results.items:
-        return jsonify({'error': 'Property not found'})
-    else:
-        for item in paginated_results.items:
-            properties.append({
-                'id': item.id,
-                'location': item.location,
-                'price': item.price,
-                'bedrooms': item.bedrooms,
-                'status': item.status,
-                'image': [image.filename for image in item.images[0]] if images else []
-                })
+        if not paginated_results.items:
+            return jsonify({'error': 'Property not found!'}), 404
+        else:
+            for item in paginated_results.items:
+                properties.append({
+                    'id': item.id,
+                    'location': item.location,
+                    'price': item.price,
+                    'bedrooms': item.bedrooms,
+                    'status': item.status,
+                    'image': [image.filename for image in item.images[0]] if images else []
+                    })
 
-        response = {
-                'properties': properties,
-                'pagination': {
-                    "total": paginated_results.total,
-                    "page": paginated_results.page,
-                    "pages": paginated_results.pages,
-                    "per_page": paginated_results.per_page,
-                    "next": paginated_results.next_num if paginated_results.has_next else None,
-                    "prev": paginated_results.prev_num if paginated_results.has_prev else None
+            response = {
+                    'properties': properties,
+                    'pagination': {
+                        "total": paginated_results.total,
+                        "page": paginated_results.page,
+                        "pages": paginated_results.pages,
+                        "per_page": paginated_results.per_page,
+                        "next": paginated_results.next_num if paginated_results.has_next else None,
+                        "prev": paginated_results.prev_num if paginated_results.has_prev else None
+                        }
                     }
-                }
-        return jsonify(response)
+            return jsonify(response), 200
+    except Exception as e:
+        return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
 
 @posts.route('/member_property_details/<int:property_id>', methods=['GET'])
 @jwt_required()
