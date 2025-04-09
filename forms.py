@@ -2,8 +2,8 @@
 Defines classes that validate the applications form  input
 '''
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
+from wtforms import StringField, PasswordField, FloatField, TextField, IntegerField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp, NumberRange
 
 class RegistrationForm(FlaskForm):
     '''
@@ -45,4 +45,27 @@ class LoginForm(FlaskForm):
         ])
     password = PasswordField('Password', validators=[
         DataRequired(),
-        Length(min=8, message="Password must be at least 8 characters long."),
+        Length(min=8, message="Password must be at least 8 characters long.")])
+
+class PropertyUploadForm(FlaskForm):
+    '''
+    validates the upload form data
+    '''
+    location = StringField('Location', validators=[
+        DataRequired(),
+        Length(min=3, max=45, message='Location must be between 3 and 45 characters')
+        ])
+    price = FloatField('Price', validators=[
+        DataRequired(),
+        NumberRange(min=0, message='Price cannot be less than 0')])
+    bedrooms = IntegerField('Bedrooms', validators=[
+        DataRequired(),
+        NumberRange(min=0, message='Bedrooms cannot be less than 0')])
+    purpose = StringField('Purpose', validators=[
+        DataRequired()])
+    latitude = StringField('Latitude', validators=[
+        DataRequired()])
+    status = StingField('Status', validators=[
+        DataRequired()])
+    description = TextField('Description', validators=[
+        DataRequired()])
