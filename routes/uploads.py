@@ -59,24 +59,27 @@ def member_property_details(property_id):
     '''
     Retrieves an item's details e.g map, description, images e.t.c
     '''
-    details = Properties.query.filter_by(id=property_id).options(selectionload(Properties.images)).first()
+    try:
+        details = Properties.query.filter_by(id=property_id).options(selectionload(Properties.images)).first()
 
-    if not details:
-        return jsonify({'error': 'Property not found'}), 404
+        if not details:
+            return jsonify({'error': 'Property not found'}), 404
 
-    property_details = {
-            'id': details.id,
-            'location': details.location,
-            'price': details.price,
-            'bedrooms': details.bedrooms,
-            'purpose': details.purpose,
-            'latitude': details.latitude,
-            'longitude': details.longitude,
-            'description': details.description,
-            'status': details.status,
-            'images': [image.filename for image in details.images] if images else []
-            }
-    return jsonify(property_details)
+        property_details = {
+                'id': details.id,
+                'location': details.location,
+                'price': details.price,
+                'bedrooms': details.bedrooms,
+                'purpose': details.purpose,
+                'latitude': details.latitude,
+                'longitude': details.longitude,
+                'description': details.description,
+                'status': details.status,
+                'images': [image.filename for image in details.images] if images else []
+                }
+        return jsonify(property_details)
+    except Exception as e:
+        return jsonify('error': 'An unexpected error occured. Please try again!'})
 
 
 @posts.route('/update_property/<int:property_id>', methods=['PATCH'])
