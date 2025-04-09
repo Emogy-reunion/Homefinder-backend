@@ -15,6 +15,8 @@ def upload():
     route to allow users to upload properties
     saves them to the database
     '''
+    if not request.files:
+        return jsonify({"error": 'Please select one or more images for the property!'}), 400
 
     form = ProperyUploadForm(request.get_json)
 
@@ -27,6 +29,7 @@ def upload():
         longitude = form.longitude.data
         description = form.description.data
         status = form.status.data
+        images = form.images.data
 
         try:
             user_id = get_jwt_identity()
