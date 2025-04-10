@@ -123,7 +123,7 @@ def guest_search():
                     'price': listing.price,
                     'location': listing.location,
                     'status': listing.status,
-                    'image': [image.filename for image in listing.images[0]] if listing.images else []
+                    'image': listing.images[0].filename if listing.images else None
                     })
         response = {
                 'listings': listings,
@@ -131,6 +131,7 @@ def guest_search():
                     'total': paginated_results.items,
                     'page': paginated_results.page,
                     'per_page': paginated_results.per_page,
+                    'pages': paginated_results.pages,
                     'next': paginated_results.next_num if paginated_results.has_next else None,
                     'prev': paginated_results.prev_num if paginated_results.has_prev else None
                     }
