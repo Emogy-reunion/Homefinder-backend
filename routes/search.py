@@ -15,7 +15,6 @@ def member_search():
     '''
     allows logged in users to filter products they have posted
     '''
-    user_id = get_jwt_identity()
     location = request.args.get('location')
     minimum_price = request.args.get('minimum_price', type=float)
     maximum_price = request.args.get('maximum_price', type=float)
@@ -25,53 +24,59 @@ def member_search():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10)
 
-    properties = Properties.query.filter_by(user_id=user_id)
 
-    if location is not None:
-        properties = properties.filter(Properties.location.ilike(f"%{location}%"))
+    try:
+        user_id = get_jwt_identity()
+        properties = Properties.query.filter_by(user_id=user_id)
+
+        if location is not None:
+            properties = properties.filter(Properties.location.ilike(f"%{location}%"))
     
-    if minimum_price is not None:
-        properties = properties.filter(Properties.price >= minimum_price)
+        if minimum_price is not None:
+            properties = properties.filter(Properties.price >= minimum_price)
 
-    if maximum_price is not None:
-        properties = properties.filter(Properties.price <= maximum_price)
+        if maximum_price is not None:
+            properties = properties.filter(Properties.price <= maximum_price)
 
-    if bedrooms is not None:
-        bedrooms = properties.filter(Properties.bedrooms == bedrooms)
+        if bedrooms is not None:
+            bedrooms = properties.filter(Properties.bedrooms == bedrooms)
 
-    if status is not None:
-        status = properties.filter(Properties.status.ilike(f"%{status}"))
+        if status is not None:
+            status = properties.filter(Properties.status.ilike(f"%{status}"))
 
 
-    properties = properties.query.options(selectinload(Properties.images))
-    paginated_results = properties.paginate(page=page, per_page=per_page)
+        properties = properties.query.options(selectinload(Properties.images))
+        paginated_results = properties.paginate(page=page, per_page=per_page)
 
-    property_listings = []
+        property_listings = []
 
-    if not paginated_results.items:
-        return jsonify({'error': 'Properties not available!'})
-    else:
-        for listing in paginated_results.items:
-            property_listings.append({
-                'id': listing.id,
-                'location': listing.location,
-                'price': listing.price,
-                'bedrooms': listing.bedrooms,
-                'status': listing.status,
-                'image': [image.filename for image in listing.images[0]] if images else []
-                })
+        if not paginated_results.items:
+            return jsonify({'error': 'Properties not available!'})
+        else:
+            for listing in paginated_results.items:
+                property_listings.append({
+                    'id': listing.id,
+                    'location': listing.location,
+                    'price': listing.price,
+                    'bedrooms': listing.bedrooms,
+                    'status': listing.status,
+                    'image': listing.images[0].filename if listing.images else None
+                    })
 
-        response = {
-                'properties': property_listings,
-                'pagination': {
-                    'total': paginated_results.total,
-                    'page': paginated_results.page,
-                    'per_page': paginated_results.per_page,
-                    'prev': paginated_results.prev_num if paginated_results.has_prev else None,
-                    'next': paginated_results.next_num if paginated_results.has else None
+            response = {
+                    'properties': property_listings,
+                    'pagination': {
+                        'total': paginated_results.total,
+                        'page': paginated_results.page,
+                        'per_page': paginated_results.per_page,
+                        'pages': paginated_results.pages,
+                        'prev': paginated_results.prev_num if paginated_results.has_prev else None,
+                        'next': paginated_results.next_num if paginated_results.has else None
+                        }
                     }
-                }
-        return jsonify(response)
+            return jsonify(response)
+    except Exception as e:
+        return jsonify({"error": 'An unexepected error occured. Please try again!'}), 500
 
 @find.route('/guest_search', methods=['GET'])
 def guest_search():
@@ -86,47 +91,51 @@ def guest_search():
     maximum_price = request.args.get('maximum_price', type=float)
     status = request.args.get('status')
 
-    properties = Properties.query
+    try:
+        properties = Properties.query
 
-    if location is not None:
-        properties = properties.filter(Properties.location.ilike(f"%{location}%"))
+        if location is not None:
+            properties = properties.filter(Properties.location.ilike(f"%{location}%"))
 
-    if minimum_price is not None:
-        properties = properties.filter(Properties.price >= minimum_price)
+        if minimum_price is not None:
+            properties = properties.filter(Properties.price >= minimum_price)
 
-    if maximum_price is not None:
-        properties = properties.filter(Properties.price <= maximum_price)
+        if maximum_price is not None:
+            properties = properties.filter(Properties.price <= maximum_price)
 
-    if bedrooms is not None:
-        properties = properties.filter(Properties.bedrooms == bedrooms)
+        if bedrooms is not None:
+            properties = properties.filter(Properties.bedrooms == bedrooms)
 
-    if status is not None:
-        properties = properties.filter(Properties.status.ilike(f"%{status}"))
+        if status is not None:
+            properties = properties.filter(Properties.status.ilike(f"%{status}"))
 
-    properties = properties.query.options(selectinload(Properties.images))
-    paginated_results = properties.paginate(page=page, per_page=per_page)
+        properties = properties.query.options(selectinload(Properties.images))
+        paginated_results = properties.paginate(page=page, per_page=per_page)
 
-    listings = []
-    if not paginated_results.items:
-        return jsonify({'error': 'Property not available!'})
-    else:
-        for listing in paginated_results.items:
-            listings.append({
-                'id': listing.id,
-                'bedrooms': listing.bedrooms,
-                'price': listing.price,
-                'location': listing.location,
-                'status': listing.status,
-                'image': [image.filename for image in listing.images[0]] if listing.images else []
-                })
-    response = {
-            'listings': listings,
-            'pagination': {
-                'total': paginated_results.items,
-                'page': paginated_results.page,
-                'per_page': paginated_results.per_page,
-                'next': paginated_results.next_num if paginated_results.has_next else None,
-                'prev': paginated_results.prev_num if paginated_results.has_prev else None
+        listings = []
+        if not paginated_results.items:
+            return jsonify({'error': 'Property not available!'})
+        else:
+            for listing in paginated_results.items:
+                listings.append({
+                    'id': listing.id,
+                    'bedrooms': listing.bedrooms,
+                    'price': listing.price,
+                    'location': listing.location,
+                    'status': listing.status,
+                    'image': listing.images[0].filename if listing.images else None
+                    })
+        response = {
+                'listings': listings,
+                'pagination': {
+                    'total': paginated_results.items,
+                    'page': paginated_results.page,
+                    'per_page': paginated_results.per_page,
+                    'pages': paginated_results.pages,
+                    'next': paginated_results.next_num if paginated_results.has_next else None,
+                    'prev': paginated_results.prev_num if paginated_results.has_prev else None
+                    }
                 }
-            }
-    return jsonify(response)
+        return jsonify(response)
+    except Exception as e:
+        return jsonify({'error': 'An unexpected error occured. Please try again!'})
