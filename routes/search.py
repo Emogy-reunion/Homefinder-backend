@@ -15,7 +15,6 @@ def member_search():
     '''
     allows logged in users to filter products they have posted
     '''
-    user_id = get_jwt_identity()
     location = request.args.get('location')
     minimum_price = request.args.get('minimum_price', type=float)
     maximum_price = request.args.get('maximum_price', type=float)
@@ -27,6 +26,7 @@ def member_search():
 
 
     try:
+        user_id = get_jwt_identity()
         properties = Properties.query.filter_by(user_id=user_id)
 
         if location is not None:
@@ -60,7 +60,7 @@ def member_search():
                     'price': listing.price,
                     'bedrooms': listing.bedrooms,
                     'status': listing.status,
-                    'image': [image.filename for image in listing.images[0]] if images else []
+                    'image': listing.images[0].filename if listing.images else None
                     })
 
             response = {
@@ -69,6 +69,7 @@ def member_search():
                         'total': paginated_results.total,
                         'page': paginated_results.page,
                         'per_page': paginated_results.per_page,
+                        'pages': paginated_results.pages,
                         'prev': paginated_results.prev_num if paginated_results.has_prev else None,
                         'next': paginated_results.next_num if paginated_results.has else None
                         }
