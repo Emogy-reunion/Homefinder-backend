@@ -25,53 +25,57 @@ def member_search():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10)
 
-    properties = Properties.query.filter_by(user_id=user_id)
 
-    if location is not None:
-        properties = properties.filter(Properties.location.ilike(f"%{location}%"))
+    try:
+        properties = Properties.query.filter_by(user_id=user_id)
+
+        if location is not None:
+            properties = properties.filter(Properties.location.ilike(f"%{location}%"))
     
-    if minimum_price is not None:
-        properties = properties.filter(Properties.price >= minimum_price)
+        if minimum_price is not None:
+            properties = properties.filter(Properties.price >= minimum_price)
 
-    if maximum_price is not None:
-        properties = properties.filter(Properties.price <= maximum_price)
+        if maximum_price is not None:
+            properties = properties.filter(Properties.price <= maximum_price)
 
-    if bedrooms is not None:
-        bedrooms = properties.filter(Properties.bedrooms == bedrooms)
+        if bedrooms is not None:
+            bedrooms = properties.filter(Properties.bedrooms == bedrooms)
 
-    if status is not None:
-        status = properties.filter(Properties.status.ilike(f"%{status}"))
+        if status is not None:
+            status = properties.filter(Properties.status.ilike(f"%{status}"))
 
 
-    properties = properties.query.options(selectinload(Properties.images))
-    paginated_results = properties.paginate(page=page, per_page=per_page)
+        properties = properties.query.options(selectinload(Properties.images))
+        paginated_results = properties.paginate(page=page, per_page=per_page)
 
-    property_listings = []
+        property_listings = []
 
-    if not paginated_results.items:
-        return jsonify({'error': 'Properties not available!'})
-    else:
-        for listing in paginated_results.items:
-            property_listings.append({
-                'id': listing.id,
-                'location': listing.location,
-                'price': listing.price,
-                'bedrooms': listing.bedrooms,
-                'status': listing.status,
-                'image': [image.filename for image in listing.images[0]] if images else []
-                })
+        if not paginated_results.items:
+            return jsonify({'error': 'Properties not available!'})
+        else:
+            for listing in paginated_results.items:
+                property_listings.append({
+                    'id': listing.id,
+                    'location': listing.location,
+                    'price': listing.price,
+                    'bedrooms': listing.bedrooms,
+                    'status': listing.status,
+                    'image': [image.filename for image in listing.images[0]] if images else []
+                    })
 
-        response = {
-                'properties': property_listings,
-                'pagination': {
-                    'total': paginated_results.total,
-                    'page': paginated_results.page,
-                    'per_page': paginated_results.per_page,
-                    'prev': paginated_results.prev_num if paginated_results.has_prev else None,
-                    'next': paginated_results.next_num if paginated_results.has else None
+            response = {
+                    'properties': property_listings,
+                    'pagination': {
+                        'total': paginated_results.total,
+                        'page': paginated_results.page,
+                        'per_page': paginated_results.per_page,
+                        'prev': paginated_results.prev_num if paginated_results.has_prev else None,
+                        'next': paginated_results.next_num if paginated_results.has else None
+                        }
                     }
-                }
-        return jsonify(response)
+            return jsonify(response)
+    except Exception as e:
+        return jsonify({"error": 'An unexepected error occured. Please try again!'}), 500
 
 @find.route('/guest_search', methods=['GET'])
 def guest_search():
