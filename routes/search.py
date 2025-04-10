@@ -33,7 +33,7 @@ def member_search():
 
     try:
         user_id = get_jwt_identity()
-        properties = Properties.query.filter_by(user_id=user_id)
+        properties = Properties.query.filter_by(user_id=user_id).options(selectinload(Properties.images))
 
         if location is not None:
             properties = properties.filter(Properties.location.ilike(f"%{location}%"))
@@ -51,7 +51,6 @@ def member_search():
             status = properties.filter(Properties.status.ilike(f"%{status}"))
 
 
-        properties = properties.query.options(selectinload(Properties.images))
         paginated_results = properties.paginate(page=page, per_page=per_page)
 
         property_listings = []
@@ -105,7 +104,7 @@ def guest_search():
     per_page = request.args.get('per_page', 10, type=int)
 
     try:
-        properties = Properties.query
+        properties = Properties.query.options(selectinload(Properties.images))
 
         if location is not None:
             properties = properties.filter(Properties.location.ilike(f"%{location}%"))
@@ -122,7 +121,6 @@ def guest_search():
         if status is not None:
             properties = properties.filter(Properties.status.ilike(f"%{status}"))
 
-        properties = properties.query.options(selectinload(Properties.images))
         paginated_results = properties.paginate(page=page, per_page=per_page)
 
         listings = []
