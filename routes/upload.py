@@ -61,6 +61,6 @@ def upload():
         if uploads:
             return jsonify({'success': 'Property uploaded successfully!'}), 201
         else:
-            return jsonify({'error': 'Failed to upload property. Please try again!'})
+            return jsonify({'error': 'Failed to upload property. Please try again!'}), 500
     else:
-        return jsonify({'errors': form.errors})
+        return jsonify({'errors': form.errors}), 400
