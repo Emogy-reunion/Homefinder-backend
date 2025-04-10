@@ -48,7 +48,7 @@ def register():
             send_verification_email(new_user)
             return jsonify({'success': 'Your account has been successfully created. Please check your email for a verification link to complete the registration process.'}), 201
     else:
-        return jsonify({'errors': form.errors})
+        return jsonify({'errors': form.errors}), 400
 
 
 @auth.route('/login', methods=['POST'])
@@ -91,7 +91,7 @@ def login():
             except Exception as e:
                 return jsonify({'error': 'An unexpected error occured. Please try again!'}), 500
     else:
-        return jsonify({'errors': form.errors})
+        return jsonify({'errors': form.errors}), 400
 
 @auth.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
