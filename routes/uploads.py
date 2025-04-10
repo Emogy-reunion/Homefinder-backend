@@ -22,32 +22,32 @@ def member_property_preview():
     paginated_results = listings.paginate(page=page, per_page=per_page)
     
     properties = []
-    for item in paginated_results.items:
-        properties.append({
+
+    if not paginated_results.items:
+        return jsonify({'error': 'Property not found'})
+    else:
+        for item in paginated_results.items:
+            properties.append({
                 'id': item.id,
                 'location': item.location,
                 'price': item.price,
                 'bedrooms': item.bedrooms,
+                'status': item.status,
                 'image': [image.filename for image in item.images[0]] if images else []
                 })
 
-    response = {
-            'properties': properties,
-            'pagination': {
-                "total": paginated_results.total,
-                "page": paginated_results.page,
-                "pages": paginated_results.pages,
-                "per_page": paginated_results.per_page,
-                "next": paginated_results.next_num if paginated_results.has_next else None,
-                "prev": paginated_results.prev_num if paginated_results.has_prev else None
+        response = {
+                'properties': properties,
+                'pagination': {
+                    "total": paginated_results.total,
+                    "page": paginated_results.page,
+                    "pages": paginated_results.pages,
+                    "per_page": paginated_results.per_page,
+                    "next": paginated_results.next_num if paginated_results.has_next else None,
+                    "prev": paginated_results.prev_num if paginated_results.has_prev else None
+                    }
                 }
-            }
-
-    if response:
         return jsonify(response)
-    else:
-        return jsonify({'error': 'Properties not found'}), 400
-
 
 @posts.route('/member_property_details/<int:property_id>', methods=['GET'])
 @jwt_required()
@@ -69,6 +69,7 @@ def member_property_details(property_id):
             'latitude': details.latitude,
             'longitude': details.longitude,
             'description': details.description,
+            'status': details.status,
             'images': [image.filename for image in details.images] if images else []
             }
     return jsonify(property_details)
@@ -89,6 +90,7 @@ def update_property(property_id):
     latitude = data.latitude
     longitude = data.longitude
     description = data.description
+    status = data.status
 
     try:
         property_listing = Properties.query(id=property_id).first()
@@ -115,7 +117,10 @@ def update_property(property_id):
             property_listing.longitude = longitude
 
         if description:
-            propety_listing.description = description
+            property_listing.description = description
+
+        if status:
+            property_listing.status = status
 
         db.session.add(property_listing)
     except Exception as e:
