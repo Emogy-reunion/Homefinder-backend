@@ -5,6 +5,7 @@ from flask import Blueprint, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from model import db, Users, Images, Properties
 from sqlalchemy.orm import selectinload
+from forms import GuestSearchForm, MemberSearchForm
 
 
 find = Blueprint('find', __name__)
@@ -15,15 +16,20 @@ def member_search():
     '''
     allows logged in users to filter products they have posted
     '''
-    location = request.args.get('location')
-    minimum_price = request.args.get('minimum_price', type=float)
-    maximum_price = request.args.get('maximum_price', type=float)
-    bedrooms = request.args.get('bedrooms', type=int)
-    status = request.args.get('status')
+
+    form = GuestSearchForm(request.args)
+
+    if not form.validate():
+        return jsonify({'errors': form.errors}), 400
+
+    location = form.location.data.lower()
+    minimum_price = form.minimum_price.data
+    maximum_price = form.maximum_price.data
+    bedrooms = form.bedrooms.data
+    status = form.status.data
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10)
-
 
     try:
         user_id = get_jwt_identity()
