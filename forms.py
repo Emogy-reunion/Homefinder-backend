@@ -78,15 +78,19 @@ class GuestSearchForm(FlaskForm):
     validates the logged out users search form input
     '''
     location = StringField('Location', validators=[
+        Optional(),
         Length(min=3, max=45, message='Location must be between 3 and 45 characters long')
         ])
     minimum_price = FloatField('Minimum price', validators=[
+        Optional(),
         NumberRange(min=0, message='Minimum price must not be less than 0!')])
     maximum_price = FloatField('Maximum price', validators=[
+        Optional(),
         NumberRange(min=0, message='Maximum price must not be less than 0!')])
     bedrooms = IntegerField('Bedrooms', validators=[
+        Optional(),
         NumberRange(min=0, message='Bedrooms cannot be less than 0')])
-    status = StingField('Status')
+    status = StingField('Status', validators=[Optional()])
 
 class MemberSearchForm(FlaskForm):
     '''
