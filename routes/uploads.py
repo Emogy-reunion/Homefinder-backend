@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from model import db, Users, Images, Properties
 from sqlalchemy.orm import selectinload
+from forms import UpdatePropertyForm
 
 
 posts = Blueprint('posts', __name__)
@@ -88,16 +89,20 @@ def update_property(property_id):
     '''
     allows logged in users to update their posts
     '''
+
+    form = UpdatePropertyForm(request.get_json)
+    if not form.validate():
+        return jsonify({'errors': form.errors}), 400
     data = request.json
 
-    location = data.location
-    price = data.price
-    bedrooms = data.bedrooms
-    purpose = data.purpose
-    latitude = data.latitude
-    longitude = data.longitude
-    description = data.description
-    status = data.status
+    location = form.location.data
+    price = form.price.data
+    bedrooms = form.bedrooms.data
+    purpose = form.purpose.data
+    latitude = form.latitude.data
+    longitude = form.longitude.data
+    description = form.description.data
+    status = form.status.data
 
     try:
         property_listing = Properties.query(id=property_id).first()
