@@ -68,7 +68,8 @@ class PropertyUploadForm(FlaskForm):
     status = StingField('Status', validators=[
         DataRequired()])
     description = TextField('Description', validators=[
-        DataRequired()])
+        DataRequired(),
+        Length(min=150, max=450, message='Description must be between 150 and 450 charcters long!')])
     images = MultipleFileField('Images', validators=[
         DataRequired()])
 
