@@ -18,7 +18,7 @@ def upload():
     if not request.files:
         return jsonify({"error": 'Please select one or more images for the property!'}), 400
 
-    form = ProperyUploadForm(request.get_json)
+    form = ProperyUploadForm(request.form)
 
     if form.validate():
         location = form.location.data.lower()
