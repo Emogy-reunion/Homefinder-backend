@@ -3,7 +3,7 @@ Defines classes that validate the applications form  input
 '''
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, FloatField, TextField, IntegerField, MultipleFileField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp, NumberRange
+from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp, NumberRange, Optional
 
 class RegistrationForm(FlaskForm):
     '''
@@ -11,13 +11,13 @@ class RegistrationForm(FlaskForm):
     '''
     firstname = StringField('First name', validators=[
         DataRequired(),
-        Length(min=2, max=45, message='First name must be between 2 and 45 letters!')])
+        Length(min=2, max=45, message='First name must be between 2 and 45 character long!')])
     lastname = StringField('Last name', validators=[
         DataRequired(),
-        Length(min=2, max=45, message='Last name must be between 2 and 45 letters!')])
+        Length(min=2, max=45, message='Last name must be between 2 and 45 characters long!')])
     agency = StringField('Agency', validators=[
         DataRequired(),
-        Length(min=2, max=45, message='Agency name must be between 2 and 45 letters!')])
+        Length(min=2, max=45, message='Agency name must be between 2 and 45 characters loni!')])
     Email = StringField('Email', validators=[
         DataRequired(),
         Email(),
@@ -53,7 +53,7 @@ class PropertyUploadForm(FlaskForm):
     '''
     location = StringField('Location', validators=[
         DataRequired(),
-        Length(min=3, max=45, message='Location must be between 3 and 45 characters')
+        Length(min=3, max=45, message='Location must be between 3 and 45 characters long')
         ])
     price = FloatField('Price', validators=[
         DataRequired(),
@@ -68,7 +68,8 @@ class PropertyUploadForm(FlaskForm):
     status = StingField('Status', validators=[
         DataRequired()])
     description = TextField('Description', validators=[
-        DataRequired()])
+        DataRequired(),
+        Length(min=150, max=450, message='Description must be between 150 and 450 charcters long!')])
     images = MultipleFileField('Images', validators=[
         DataRequired()])
 
@@ -78,27 +79,59 @@ class GuestSearchForm(FlaskForm):
     validates the logged out users search form input
     '''
     location = StringField('Location', validators=[
-        Length(min=3, max=45, message='Location must be between 3 and 45 characters')
+        Optional(),
+        Length(min=3, max=45, message='Location must be between 3 and 45 characters long')
         ])
     minimum_price = FloatField('Minimum price', validators=[
+        Optional(),
         NumberRange(min=0, message='Minimum price must not be less than 0!')])
     maximum_price = FloatField('Maximum price', validators=[
+        Optional(),
         NumberRange(min=0, message='Maximum price must not be less than 0!')])
     bedrooms = IntegerField('Bedrooms', validators=[
+        Optional(),
         NumberRange(min=0, message='Bedrooms cannot be less than 0')])
-    status = StingField('Status')
+    status = StingField('Status', validators=[Optional()])
 
 class MemberSearchForm(FlaskForm):
     '''
     validates the logged in users search form input
     '''
     location = StringField('Location', validators=[
-        Length(min=3, max=45, message='Location must be between 3 and 45 characters')
+        Optional(),
+        Length(min=3, max=45, message='Location must be between 3 and 45 characters long')
         ])
     minimum_price = FloatField('Minimum price', validators=[
+        Optional(),
         NumberRange(min=0, message='Minimum price must not be less than 0!')])
     maximum_price = FloatField('Maximum price', validators=[
+        Optional(),
         NumberRange(min=0, message='Maximum price must not be less than 0!')])
     bedrooms = IntegerField('Bedrooms', validators=[
+        Optional(),
         NumberRange(min=0, message='Bedrooms cannot be less than 0')])
-    status = StingField('Status')
+    status = StingField('Status', validators=[Optional()])
+
+class UpdatePropertyForm(FlaskForm):
+    '''
+    validates the update property form details
+    '''
+    location = StringField('Location', validators=[
+        Optional(),
+        Length(min=3, max=45, message='Location must be between 3 and 45 characters long')
+        ])
+    price = FloatField('Price', validators=[
+        Optional(),
+        NumberRange(min=0, message='Price cannot be less than 0')])
+    bedrooms = IntegerField('Bedrooms', validators=[
+        Optional(),
+        NumberRange(min=0, message='Bedrooms cannot be less than 0')])
+    purpose = StringField('Purpose', validators=[
+        Optional()])
+    latitude = StringField('Latitude', validators=[
+        Optional()])
+    status = StingField('Status', validators=[
+        Optional()])
+    description = TextField('Description', validators=[
+        Optional(),
+        Length(min=150, max=450, message='Description must be between 150 and 450 charcters long!])
