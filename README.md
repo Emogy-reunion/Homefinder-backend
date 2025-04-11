@@ -60,7 +60,7 @@
 * Contributions are welcome! Whether you're fixing a bug, improving the documentation, or adding new features, your help is appreciated.
 * To contribute:
 1. **Fork** the repository
-2. **Clone** your form
+2. **Clone** your fork
     ```sh
         git clone https://github.com/Emogy-reunion/Homefinder-backend.git
     ```
