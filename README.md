@@ -17,15 +17,15 @@
 * Built for scalability and performance, it's the core service behind helping users find their perfect home.
 
 ## Repository Structure
-**app.py**: Entry point of the application
-**create_app.py**: Application factory
-**config.py**: Configuration settings
-**form.py**: Form classes and validation
-**models.py**: Database models
-**routes/**: Application routes and views
-**utils/**: Utility functions and helpers
-**migrations/**: stores migrations scripts
-**requirements.txt**: dependencies
+* **app.py**: Entry point of the application
+* **create_app.py**: Application factory
+* **config.py**: Configuration settings
+* **form.py**: Form classes and validation
+* **models.py**: Database models
+*  **routes/**: Application routes and views
+* **utils/**: Utility functions and helpers
+* **migrations/**: stores migrations scripts
+* **requirements.txt**: dependencies
 
 ## Installation
 * To get started with this repository, follow these steps
