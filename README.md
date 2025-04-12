@@ -7,7 +7,7 @@
 3. [Installation](#installation)
 4. [Usage](#usage)
 5. [Contributing](#contributing)
-6. [Licence](#licence)
+6. [License](#license)
 7. [Contact](#contact)
 
 
