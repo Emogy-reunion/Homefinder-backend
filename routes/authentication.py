@@ -17,7 +17,7 @@ def register():
     It renders the form that collects the data
     It extractst the data and saves it to the database
     '''
-    form = RegistrationForm(request.get_json)
+    form = RegistrationForm(data=request.get_json())
 
     if form.validate():
         firstname = form.firstname.data.lower()
