@@ -58,7 +58,7 @@ def login():
     creates an access token
     '''
 
-    form = LoginForm(request.get_json)
+    form = LoginForm(data.request.get_json)
 
     if form.validate():
         email = form.email.data
