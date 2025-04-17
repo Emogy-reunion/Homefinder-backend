@@ -17,7 +17,7 @@ def member_search():
     allows logged in users to filter products they have posted
     '''
 
-    form = MemberSearchForm(request.args)
+    form = MemberSearchForm(data=request.args)
 
     if not form.validate():
         return jsonify({'errors': form.errors}), 400
@@ -88,7 +88,7 @@ def guest_search():
     '''
     allows logged out users to filter products
     '''
-    form = GuestSearchForm(request.args)
+    form = GuestSearchForm(data=request.args)
 
     if not form.validate():
         return jsonify({'errors': form.errors}), 400
